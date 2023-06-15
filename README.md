@@ -48,12 +48,12 @@ python merge_image.py --prefix <접두사> --column <열_개수> --row <행_개�
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/ball/merged_ball.jpg></img>
 
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/JJong/JJong.JPG
- width="100"
- height="200"></img>
+ width="200"
+ height="100"></img>
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/arrow.png></img>
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/JJong/merged_JJong.jpg
- width="100"
- height="200"></img>  
+ width="200"
+ height="100"></img>  
 
 ## Trouble
 배경과 유사한 이미지 조각이 포함되어 있는 경우 생성된 이미지가 원본과 다를 수 있다. 다른 이미지 조합을 시도하거나, 원본 이미지에 대한 추가적인 이미지 조각을 확보하여 알고리즘의 성능을 향상시켜야한다.
