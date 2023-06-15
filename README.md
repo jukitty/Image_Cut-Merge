@@ -39,19 +39,16 @@ python merge_image.py --prefix <접두사> --column <열_개수> --row <행_개�
 가장 높은 유사도를 가진 이미지 조합을 선택하여 원본 이미지와 크기를 맞추고, 결과 이미지를 저장한다.
 
 ## Example
-원본 이미지
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/sam/sam.jpg></img>
-병합된 이미지
+<img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/arrow.png></img>
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/sam/merged_sam.jpg></img>  
 
-원본 이미지
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/ball/ball.jpg></img>
-병합된 이미지
+<img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/arrow.png></img>
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/ball/merged_ball.jpg></img>
 
-원본 이미지
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/JJong/JJong.JPG></img>
-병합된 이미지
+<img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/arrow.png></img>
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/JJong/merged_JJong.jpg></img>  
 
 
