@@ -1,26 +1,9 @@
-import sys
 import os
 from PIL import Image, ImageFilter
 import itertools
 import numpy as np
 import cv2
 import argparse
-
-def extract_edge_features(image):
-    grayscale_image = image.convert("L")  # 이미지를 그레이스케일로 변환
-    edges = grayscale_image.filter(ImageFilter.FIND_EDGES)  # 엣지 감지
-    edge_features = np.array(list(edges.getdata()), dtype=np.uint8)  # 픽셀 데이터 가져오기
-
-    return edge_features
-
-def calculate_edge_similarity(edge_features1, edge_features2):
-    template = edge_features1.reshape(-1, 1)
-    target = edge_features2.reshape(-1, 1)
-
-    result = cv2.matchTemplate(target, template, cv2.TM_CCOEFF_NORMED)
-    similarity = np.max(result)
-
-    return similarity
 
 # 채널 유사도 계산 함수
 def calculate_channel_similarity(image1, image2):
@@ -39,25 +22,53 @@ def calculate_channel_similarity(image1, image2):
 
     return channel_similarity
 
-def extract_image_piece_edge_features(image_pieces):
-    piece_edge_features = []
+# Canny 알고리즘을 사용하여 엣지 추출
+def canny_edge_detection(image):
+    # 그레이스케일 변환
+    grayscale_image = image.convert("L")
+    
+    # 엣지 추출
+    edge_image = grayscale_image.filter(ImageFilter.FIND_EDGES)
+    
+    return edge_image
 
-    for piece in image_pieces:
-        edge_features = extract_edge_features(piece)
-        piece_edge_features.append(edge_features)
+# 텍스처 특징 추출
+def extract_texture_features(image):
+    # OpenCV로 이미지 로드
+    cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    
+    # 이미지를 그레이스케일로 변환
+    gray_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+    
+    # ORB 특징 추출기 생성
+    orb = cv2.ORB_create()
+    
+    # 특징 디스크립터 계산
+    _, descriptors = orb.detectAndCompute(gray_image, None)
+    
+    return descriptors
 
-    return np.array(piece_edge_features)  # 넘파이 배열로 변환하여 반환
+# 색상 특징 추출
+def extract_color_features(image):
+    # 이미지를 넘파이 배열로 변환
+    pixels = np.array(image)
 
+    # RGB 각 채널의 평균값 계산
+    color_features = np.mean(pixels, axis=(0, 1))
+
+    return color_features
 
 def merge_images(prefix, column_num, row_num, output_filename):
-    # 이미지 파일 경로(확장자 제한)
-    file_list = [
-        os.path.basename(f.path)
-        for f in os.scandir()
-        if f.is_file() and f.name.startswith(prefix) and f.name.endswith(('.jpg', '.jpeg', '.png'))
-    ]
+    # 파일 경로
+    file_list = os.listdir()
 
-    # 이미지 조각 객체들을 담을 리스트
+    # 원본 이미지 경로
+    imgs = []
+    for img in file_list:
+        if img.startswith(prefix):
+            imgs.append(img)
+
+    # 이미지 조각들을 담을 리스트
     image_pieces = []
     for image_name in file_list:
         if image_name.startswith(prefix):
@@ -66,9 +77,9 @@ def merge_images(prefix, column_num, row_num, output_filename):
             image_pieces.append(image)
 
     # 원본 이미지 로드
-    first_image_name = file_list[0].split('_')[2]
-    first_image_path = os.path.join('./', first_image_name)
-    original_image = Image.open(first_image_path)
+    original_image_name = imgs[0].split('_')[2]
+    original_image_path = f'./{original_image_name}'
+    original_image = Image.open(original_image_path)
     original_width, original_height = original_image.size
     target_ratio = original_width / original_height
 
@@ -101,12 +112,14 @@ def merge_images(prefix, column_num, row_num, output_filename):
         image_pieces.append(resized_piece.transpose(Image.FLIP_TOP_BOTTOM))
         image_pieces.append(resized_piece.transpose(Image.FLIP_LEFT_RIGHT | Image.FLIP_TOP_BOTTOM))
 
-    # 이미지 조각들의 엣지 특징 추출
-    piece_edge_features = extract_image_piece_edge_features(image_pieces)
-
     # 모든 경우의 수로 이미지 조합 생성 및 유사도 비교
     best_merged_image = None
     best_similarity = 0
+
+    # 이미지 특징 추출
+    original_edge_image = canny_edge_detection(original_image)
+    original_texture_features = extract_texture_features(original_image)
+    original_color_features = extract_color_features(original_image)
 
     for combination in itertools.permutations(range(len(image_pieces)), column_num * row_num):
         print(f'{combination} 유사도 비교')
@@ -122,25 +135,38 @@ def merge_images(prefix, column_num, row_num, output_filename):
         # 이미지 크기 조정
         merged_image = merged_image.resize((original_width, original_height))
 
-        # 엣지 특징 추출
-        merged_edge_features = extract_edge_features(merged_image)
+        # 특징 추출
+        merged_edge_image = canny_edge_detection(merged_image)
+        merged_texture_features = extract_texture_features(merged_image)
+        merged_color_features = extract_color_features(merged_image)
 
-        # 엣지 특징 유사도 계산
-        edge_similarity = calculate_edge_similarity(merged_edge_features, piece_edge_features)
+        # 엣지 유사도 비교
+        edge_similarity = calculate_channel_similarity(merged_edge_image, original_edge_image)
+        # 텍스처 유사도 비교
+        texture_similarity = calculate_channel_similarity(merged_texture_features, original_texture_features)
+        # 색상 유사도 비교
+        color_similarity = calculate_channel_similarity(merged_color_features, original_color_features)
+
+        # 유사도 종합
+        overall_similarity = (edge_similarity + texture_similarity + color_similarity) / 3
+        print(overall_similarity)
 
         # 가장 높은 유사도 업데이트
-        if edge_similarity > best_similarity:
-            best_similarity = edge_similarity
+        if overall_similarity > best_similarity:
+            best_similarity = overall_similarity
             best_merged_image = merged_image
 
         # 이미 최고 유사도를 넘어설 수 없는 경우 종료
-        if best_similarity == 1.0:
+        if overall_similarity >= 1.0:
             break
 
-    # 결과 출력
-    print(f'가장 높은 유사도: {best_similarity}')
-    best_merged_image.save(output_filename)
-    print(f'결과 이미지 저장: {output_filename}')
+    # 결과 이미지 저장
+    if best_merged_image is not None:
+        best_merged_image.save(output_filename)
+        print(f"{output_filename}로 이미지 병합 완료")
+    else:
+        print("이미지 병합 실패")
+
 
 # 스크립트 실행
 if __name__ == "__main__":
