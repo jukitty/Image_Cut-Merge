@@ -22,7 +22,7 @@ python merge_image.py --prefix <접두사> --column <열_개수> --row <행_개�
 첫 번째 이미지 조각의 이름에서 원본 이미지 파일 이름을 추출하고, 해당 이미지를 로드한다. 
 원본 이미지의 크기를 측정하여 복원할 이미지의 크기를 결정하는 기준으로 사용된다.
 
-3.이미지 비율 맞추기
+3. 이미지 비율 맞추기
 원본 이미지의 비율이 1:1인 경우, 이미지 조각들을 추가로 생성하여 가로 및 세로 방향으로 90도 회전한 조각들을 포함한다.
 그런 다음, 이미지 조각들의 크기를 원본 이미지의 비율에 맞춰 조정한다.
 
@@ -47,9 +47,13 @@ python merge_image.py --prefix <접두사> --column <열_개수> --row <행_개�
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/arrow.png></img>
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/ball/merged_ball.jpg></img>
 
-<img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/JJong/JJong.JPG></img>
+<img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/JJong/JJong.JPG
+ width="100"
+ height="200"></img>
 <img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/arrow.png></img>
-<img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/JJong/merged_JJong.jpg></img>  
+<img src=https://github.com/jukitty/Image_Cut-Merge/blob/main/images/JJong/merged_JJong.jpg
+ width="100"
+ height="200"></img>  
 
 ## Trouble
 배경과 유사한 이미지 조각이 포함되어 있는 경우 생성된 이미지가 원본과 다를 수 있다. 다른 이미지 조합을 시도하거나, 원본 이미지에 대한 추가적인 이미지 조각을 확보하여 알고리즘의 성능을 향상시켜야한다.
