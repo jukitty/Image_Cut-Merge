@@ -2,12 +2,12 @@
 > 이 프로젝트는 이미지를 NxM 조각으로 분할하고, 분할된 이미지를 병합하여 원본과 유사한 이미지를 생성하는 기능을 제공한다.
 
 ## How to use
-이미지를 자르려면 `cut_image.py` 스크립트를 사용한다.
+이미지를 자르려면 `cut_image.py` 를 사용한다.
 ```
 cut_image.py <원본_이미지_파일명> <열_개수> <행_개수> <접두사>
 ``` 
 
-이미지를 분할하려면 `merge_image.py` 스크립트를 사용한다.
+이미지를 분할하려면 `merge_image.py` 를 사용한다.
 ```
 python merge_image.py --prefix <접두사> --column <열_개수> --row <행_개수> --output <저장될_이미지_파일명>
 ``` 
